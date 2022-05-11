@@ -9,6 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'username', 'email', 'bio', 'first_name', 'last_name', 'role'
         )
+        lookup_field = 'username'
 
 
 class EmailSerializer(serializers.Serializer):
