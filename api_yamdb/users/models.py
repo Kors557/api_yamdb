@@ -24,10 +24,32 @@ class User(AbstractUser):
         blank=False,
         null=False,
     )
-    bio = models.TextField("Биография", blank=True,)
-    email = models.EmailField("email", unique=True, null=False, max_length=254)
-    first_name = models.CharField("Имя", max_length=150, blank=True)
-    last_name = models.CharField("Фамилия", max_length=150, blank=True)
+    bio = models.TextField(
+        "Биография",
+        blank=True,
+        )
+    email = models.EmailField(
+        "email",
+        unique=True,
+        null=False,
+        max_length=254
+        )
+    first_name = models.CharField(
+        "Имя",
+        max_length=150,
+        blank=True
+        )
+    last_name = models.CharField(
+        "Фамилия",
+        max_length=150,
+        blank=True
+        )
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    REQUIRED_FIELDS = ["email"]
+    USERNAME_FIELDS = "email"
 
     def __str__(self):
         return self.username
@@ -40,4 +62,6 @@ class User(AbstractUser):
     def is_moderator(self):
         return self.role == self.MODERATOR
 
-    
+    @property
+    def is_user(self):
+        return self.role == self.USER
