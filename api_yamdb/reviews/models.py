@@ -10,7 +10,19 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256)
+    BOOKS = 'books'
+    MOVIES = 'movies'
+    MUSIC = 'music'
+
+    GENRES = [
+        (BOOKS, 'Книги'),
+        (MOVIES, 'Фильмы'),
+        (MUSIC, 'Музыка')
+    ]
+
+    name = models.CharField(
+        max_length=256,
+        choices=GENRES,)
     slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
@@ -20,10 +32,13 @@ class Genre(models.Model):
 class Title(models.Model):
     id = models.AutoField(primary_key=True)
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, related_name='titles', null=True
+        Category,
+        on_delete=models.CASCADE,
+        related_name='categories',
     )
     genre = models.ManyToManyField(
-        Genre, related_name='titles'
+        Genre,
+        related_name='genres',
     )
     name = models.CharField(max_length=256)
     year = models.PositiveIntegerField()
