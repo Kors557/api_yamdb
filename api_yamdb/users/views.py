@@ -16,10 +16,11 @@ from api_yamdb.settings import DEFAULT_FROM_EMAIL
 class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminUser, IsAdminOrReadOnly)
+    permission_classes = (IsAdminUser, IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
     lookup_value_regex = r'[\w\@\.\+\-]+'
+    lookup_field = 'username'
     search_fields = ('username',)
 
     @action(
