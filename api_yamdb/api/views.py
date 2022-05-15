@@ -19,6 +19,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = ('slug')
 
 
 class GenresViewSet(viewsets.ModelViewSet):
@@ -28,6 +29,7 @@ class GenresViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = ('slug')
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
