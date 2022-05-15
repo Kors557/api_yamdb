@@ -12,4 +12,7 @@ v1_router.register(r'users', UsersViewSet, basename='users')
 
 
 urlpatterns = [
+    path('v1/auth/signup/', RegisterUser.as_view(), name='register_user'),
+    path('v1/auth/token/', TakeToken.as_view(), name='take_token'),
     path('v1/', include(v1_router.urls)),
+]
