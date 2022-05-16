@@ -12,23 +12,11 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    BOOKS = 'books'
-    MOVIES = 'movies'
-    MUSIC = 'music'
-
-    GENRES = [
-        (BOOKS, 'Книги'),
-        (MOVIES, 'Фильмы'),
-        (MUSIC, 'Музыка')
-    ]
-
-    name = models.CharField(
-        max_length=256,
-        choices=GENRES,)
+    name = models.CharField(max_length=256)
     slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
-        return self.slug
+        return self.name
 
 
 class Title(models.Model):
@@ -36,14 +24,15 @@ class Title(models.Model):
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
-        related_name='categories',
+        related_name='titles',
     )
     genre = models.ManyToManyField(
         Genre,
-        related_name='genres',
+        related_name='titles',
     )
     name = models.CharField(max_length=256)
     year = models.PositiveIntegerField()
+    rating = models.PositiveIntegerField(default=None)
     description = models.CharField(max_length=256)
 
     def __str__(self):
