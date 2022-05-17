@@ -1,8 +1,12 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters, mixins
+
 from .permissions import ReviewCommentPermissions
 from reviews.models import Category, Genre, Title, Review
 from rest_framework.pagination import LimitOffsetPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import FilterSet, CharFilter
+
 from users.permissions import IsAdminOrReadOnly
 from api.serializers import (
     CategorySerializer,
@@ -43,23 +47,41 @@ class GenresViewSet(
     lookup_field = 'slug'
 
 
+class TitleFilter(FilterSet):
+    genre = CharFilter(field_name='genre__slug')
+    category = CharFilter(field_name='category__slug')
+    name = CharFilter(field_name='name')
+    year = CharFilter(field_name='year')
+
+    class Meta:
+        model = Title
+        fields = (
+            'id', 'category', 'genre', 'name', 'year', 'description'
+        )
+
+
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name', 'category__slug', 'genre__slug', 'year')
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+    # filterset_fields = ('name', 'year', 'genre__slug', 'category__slug')
+
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
+        slug = self.request.data['category']
         category = get_object_or_404(
             Category,
-            slug=self.request.data['category']
+            slug=slug
         )
         genres = []
-        slugs = self.request.data['genre']
-        for slug in slugs:
-            genre = get_object_or_404(Genre, slug=slug)
+        for slug in self.request.data.getlist('genre'):
+            genre = get_object_or_404(
+                Genre,
+                slug=slug
+            )
             genres.append(genre)
         serializer.save(category=category, genre=genres)
 
