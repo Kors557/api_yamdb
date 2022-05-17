@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
@@ -74,16 +75,22 @@ class ReviewSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
 
+    def validate(self, data):
+        title_id = self.context['view'].kwargs['title_id']
+        title = get_object_or_404(Title, pk=title_id)
+        if (self.context['view'].request.method == 'POST'
+                and title.review_titles.filter(
+                    author=self.context['request'].user).exists()):
+            raise serializers.ValidationError(
+                'Нельзя добавить второй отзыв на одно произведение.')
+        return data
+
     class Meta:
         model = Review
-        fields = '__all__'
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Review.objects.all(),
-                fields=('title', 'author'),
-                message='Нельзя оставить больше одного отзыв'
-            )
-        ]
+
+        fields = ('id', 'text', 'author', 'score', 'pub_date',)
+        read_only_fields = ('author',)
+        validators = []
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -95,5 +102,7 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'author', 'text', 'pub_date')
         model = Comment
+
+    

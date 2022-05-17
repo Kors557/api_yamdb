@@ -15,6 +15,7 @@ from api.serializers import (
     ReviewSerializer,
     CommentSerializer
 )
+from django.shortcuts import get_object_or_404
 
 
 class CategoriesViewSet(
@@ -95,7 +96,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return new_queryset
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        serializer.save(author=self.request.user, title=title)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -103,11 +106,20 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [ReviewCommentPermissions]
 
     def get_queryset(self):
+        title_id = self.kwargs.get('title_id')
         review_id = self.kwargs.get('review_id')
-        new_queryset = Review.objects.filter(review=review_id)
+        review = get_object_or_404(Review, id=review_id)
+        new_queryset = review.comments.filter(
+            review=review_id,
+            review__title=title_id)
         return new_queryset
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-    permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
+        title_id = self.kwargs.get('title_id')
+        author = self.request.user
+        text = self.request.data.get('text')
+        review_id = self.kwargs.get('review_id')
+        review = get_object_or_404(
+            Review, id=review_id, title__id=title_id
+        )
+        serializer.save(author=author, review=review, text=text)

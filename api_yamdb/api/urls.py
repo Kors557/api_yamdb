@@ -18,11 +18,13 @@ v1_router.register(r'users', UsersViewSet, basename='users')
 v1_router.register(
     r'titles/(?P<title_id>\d+)/reviews',
     ReviewViewSet,
-    basename='reviews')
+    basename='reviews'
+)
 v1_router.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
     CommentViewSet,
-    basename='comments')
+    basename='comments'
+)
 
 urlpatterns = [
     path('v1/auth/signup/', RegisterUser.as_view(), name='register_user'),
