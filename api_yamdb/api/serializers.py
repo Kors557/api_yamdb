@@ -65,7 +65,7 @@ class TitleSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id', 'category', 'genre', 'name', 'year', 'description', 'rating'
+            'id', 'category', 'genre', 'name', 'year', 'description', 'rating',
         )
         model = Title
 
@@ -91,7 +91,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
 
-        fields = ('id', 'text', 'author', 'score', 'pub_date',)
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
         read_only_fields = ('author',)
         validators = []
 
