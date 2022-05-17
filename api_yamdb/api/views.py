@@ -1,5 +1,5 @@
-
-from rest_framework import viewsets, filters
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, filters, mixins
 from .permissions import ReviewCommentPermissions
 from reviews.models import Category, Genre, Title, Review
 from rest_framework.pagination import LimitOffsetPagination
@@ -14,31 +14,55 @@ from api.serializers import (
 from django.shortcuts import get_object_or_404
 
 
-class CategoriesViewSet(viewsets.ModelViewSet):
+class CategoriesViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    lookup_field = ('slug')
+    lookup_field = 'slug'
 
 
-class GenresViewSet(viewsets.ModelViewSet):
+class GenresViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    lookup_field = ('slug')
+    lookup_field = 'slug'
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name', 'category__slug', 'genre__slug', 'year')
     pagination_class = LimitOffsetPagination
+
+    def perform_create(self, serializer):
+        category = get_object_or_404(
+            Category,
+            slug=self.request.data['category']
+        )
+        genres = []
+        slugs = self.request.data['genre']
+        for slug in slugs:
+            genre = get_object_or_404(Genre, slug=slug)
+            genres.append(genre)
+        serializer.save(category=category, genre=genres)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

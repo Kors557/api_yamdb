@@ -12,25 +12,11 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    BOOKS = 'books'
-    MOVIES = 'movies'
-    MUSIC = 'music'
-
-    GENRES = [
-        (BOOKS, 'Книги'),
-        (MOVIES, 'Фильмы'),
-        (MUSIC, 'Музыка')
-    ]
-
-    name = models.CharField(
-        max_length=256,
-        choices=GENRES,
-        unique=True
-        )
+    name = models.CharField(max_length=256)
     slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
-        return self.slug
+        return self.name
 
 
 class Title(models.Model):
@@ -46,6 +32,7 @@ class Title(models.Model):
     )
     name = models.CharField(max_length=256)
     year = models.IntegerField()
+    rating = models.PositiveIntegerField(default=None)
     description = models.CharField(max_length=256, blank=True, null=True)
 
     def __str__(self):
