@@ -20,20 +20,20 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
+    id = models.AutoField(primary_key=True)
     category = models.ForeignKey(
         Category,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='titles',
-        blank=True,
-        null=True,
     )
     genre = models.ManyToManyField(
-        Genre
+        Genre,
+        related_name='titles',
     )
     name = models.CharField(max_length=256)
-    year = models.IntegerField()
-    rating = models.PositiveIntegerField(default=None)
-    description = models.CharField(max_length=256, blank=True, null=True)
+    year = models.PositiveIntegerField()
+    #rating = models.PositiveIntegerField(default=None)
+    description = models.CharField(max_length=256)
 
     def __str__(self):
         return self.name

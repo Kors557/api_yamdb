@@ -22,16 +22,10 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
 
-    category = serializers.SlugRelatedField(
-        many=True,
-        slug_field='slug',
-        read_only=True
-    )
-    genre = serializers.SlugRelatedField(
-        queryset=Genre.objects.all(),
-        many=True,
-        slug_field='slug',
-    )
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(read_only=True, many=True)
+
+    # rating = serializers.SerializerMethodField()
 
     def validate(self, data):
         try:
@@ -63,9 +57,12 @@ class TitleSerializer(serializers.ModelSerializer):
         title.genre.set(genres)
         return title
 
+    # def get_rating(self, obj):
+    #   return obj.reviews.aggregate(Avg('score'))
+
     class Meta:
         fields = (
-            'id', 'category', 'genre', 'name', 'year', 'description', 'rating'
+            'id', 'category', 'genre', 'name', 'year', 'description'
         )
         model = Title
 
