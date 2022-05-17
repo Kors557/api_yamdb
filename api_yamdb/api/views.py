@@ -50,7 +50,7 @@ class GenresViewSet(
 class TitleFilter(FilterSet):
     genre = CharFilter(field_name='genre__slug')
     category = CharFilter(field_name='category__slug')
-    name = CharFilter(field_name='name')
+    name = CharFilter(field_name='name', lookup_expr='contains')
     year = CharFilter(field_name='year')
 
     class Meta:
@@ -66,7 +66,6 @@ class TitlesViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
-    # filterset_fields = ('name', 'year', 'genre__slug', 'category__slug')
 
     pagination_class = LimitOffsetPagination
 
