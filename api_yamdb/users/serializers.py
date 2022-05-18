@@ -9,12 +9,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-             'username',
-             'email',
-             'bio',
-             'first_name',
-             'last_name',
-             'role'
+            'username',
+            'email',
+            'bio',
+            'first_name',
+            'last_name',
+            'role'
         )
         lookup_field = 'username'
 
