@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
+from django.db.models import Avg
+
 import datetime as dt
 from reviews.models import Category, Genre, Title, Comment, Review
 
@@ -25,7 +26,7 @@ class TitleSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(read_only=True, many=True)
 
-    # rating = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
 
     def validate(self, data):
         try:
@@ -57,12 +58,18 @@ class TitleSerializer(serializers.ModelSerializer):
         title.genre.set(genres)
         return title
 
-    # def get_rating(self, obj):
-    #   return obj.reviews.aggregate(Avg('score'))
+    def get_rating(self, title):
+        reviews = Review.objects.filter(
+            title=title)
+        if reviews is None:
+            rating = None
+            return rating
+        rating = reviews.all().aggregate(Avg('score'))['score__avg']
+        return rating
 
     class Meta:
         fields = (
-            'id', 'category', 'genre', 'name', 'year', 'description'
+            'id', 'category', 'genre', 'name', 'year', 'description', 'rating',
         )
         model = Title
 
@@ -75,11 +82,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
 
+    title = serializers.HiddenField(default=None)
+
+    score = serializers.IntegerField(max_value=10, min_value=1)
+
     def validate(self, data):
         title_id = self.context['view'].kwargs['title_id']
         title = get_object_or_404(Title, pk=title_id)
         if (self.context['view'].request.method == 'POST'
-                and title.review_titles.filter(
+                and title.reviews.filter(
                     author=self.context['request'].user).exists()):
             raise serializers.ValidationError(
                 'Нельзя добавить второй отзыв на одно произведение.')
@@ -88,8 +99,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ('__all__')
-    
-
 
 class CommentSerializer(serializers.ModelSerializer):
     """Сериализатор для комментариев."""
@@ -102,5 +111,3 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('id', 'author', 'text', 'pub_date')
         model = Comment
-
-    

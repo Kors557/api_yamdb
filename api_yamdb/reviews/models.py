@@ -32,7 +32,6 @@ class Title(models.Model):
     )
     name = models.CharField(max_length=256)
     year = models.PositiveIntegerField()
-    #rating = models.PositiveIntegerField(default=None)
     description = models.CharField(max_length=256)
 
     def __str__(self):
@@ -57,7 +56,7 @@ class Review(models.Model):
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
-        blank=True,
+        default=1,
         validators=[
             MinValueValidator(1, 'Допустимы значения от 1 до 10'),
             MaxValueValidator(10, 'Допустимы значения от 1 до 10')
@@ -67,6 +66,14 @@ class Review(models.Model):
         verbose_name='Дата публикации',
         auto_now_add=True,
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'author'],
+                name='unique_review'
+            )
+        ]
 
 
 class Comment(models.Model):

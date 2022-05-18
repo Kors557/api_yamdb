@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from turtle import title
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters, mixins
@@ -68,8 +69,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
-
     pagination_class = LimitOffsetPagination
+    
 
     def perform_create(self, serializer):
         slug = self.request.data['category']
@@ -93,8 +94,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
-        queryset = Review.objects.filter(title=title_id)
-        return queryset
+        title = get_object_or_404(Title, id=title_id)
+        return title.reviews.all()
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
