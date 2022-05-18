@@ -64,7 +64,7 @@ class TitleSerializer(serializers.ModelSerializer):
         if reviews is None:
             rating = None
             return rating
-        rating = reviews.all().aggregate(Avg('score'))
+        rating = reviews.all().aggregate(Avg('score'))['score__avg']
         return rating
 
     class Meta:
