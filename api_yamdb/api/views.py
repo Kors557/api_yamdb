@@ -1,3 +1,5 @@
+from django.db.models import Avg
+from turtle import title
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters, mixins
 
@@ -67,8 +69,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
-
     pagination_class = LimitOffsetPagination
+    
 
     def perform_create(self, serializer):
         slug = self.request.data['category']

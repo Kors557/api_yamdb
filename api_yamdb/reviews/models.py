@@ -58,7 +58,7 @@ class Review(models.Model):
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
-        blank=True,
+        default=1,
         validators=[
             MinValueValidator(1, 'Допустимы значения от 1 до 10'),
             MaxValueValidator(10, 'Допустимы значения от 1 до 10')
@@ -70,11 +70,12 @@ class Review(models.Model):
     )
 
     class Meta:
-        constraints = (
+        constraints = [
             models.UniqueConstraint(
-                fields=('author', 'title'), name='unique_review_author'
-            ),
-        )
+                fields=['title', 'author'],
+                name='unique_review'
+            )
+        ]
 
     def __str__(self):
         return self.text
