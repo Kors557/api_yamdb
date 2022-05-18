@@ -92,8 +92,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
-        new_queryset = Title.objects.filter(title=title_id)
-        return new_queryset
+        title = get_object_or_404(Title, id=title_id)
+        return title.reviews.all()
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')

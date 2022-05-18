@@ -125,21 +125,13 @@ class Test04TitleAPI:
         assert len(data['results']) == 1, (
             'Проверьте, что при GET запросе `/api/v1/titles/` фильтуется по `category` параметру `slug` категории'
         )
-        print(data)
         response = admin_client.get('/api/v1/titles/?year=2000')
         data = response.json()
-        print(data)
-        print(response.status_code)
-        print(data['results'])
         assert len(data['results']) == 1, (
             'Проверьте, что при GET запросе `/api/v1/titles/` фильтуется по `year` параметру года'
         )
         response = admin_client.get('/api/v1/titles/?name=Поворот')
-        print(data)
         data = response.json()
-        print(data)
-        print(response.status_code)
-        print(data['results'])
         assert len(data['results']) == 2, (
             'Проверьте, что при GET запросе `/api/v1/titles/` фильтуется по `name` параметру названия'
         )

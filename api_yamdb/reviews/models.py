@@ -32,7 +32,7 @@ class Title(models.Model):
     )
     name = models.CharField(max_length=256)
     year = models.PositiveIntegerField()
-    #rating = models.PositiveIntegerField(default=None)
+    # rating = models.PositiveIntegerField(default=None)
     description = models.CharField(max_length=256)
 
     def __str__(self):
