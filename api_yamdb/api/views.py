@@ -1,14 +1,10 @@
-from django.db.models import Avg
-from turtle import title
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters, mixins
-
-from .permissions import ReviewCommentPermissions
-from reviews.models import Category, Genre, Title, Review
-from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import FilterSet, CharFilter
-
+from reviews.models import Category, Genre, Title, Review
+from rest_framework.pagination import LimitOffsetPagination
+from .permissions import ReviewCommentPermissions
 from users.permissions import IsAdminOrReadOnly
 from api.serializers import (
     CategorySerializer,
@@ -17,7 +13,6 @@ from api.serializers import (
     ReviewSerializer,
     CommentSerializer
 )
-from django.shortcuts import get_object_or_404
 
 
 class CategoriesViewSet(
@@ -70,7 +65,6 @@ class TitlesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
     pagination_class = LimitOffsetPagination
-    
 
     def perform_create(self, serializer):
         slug = self.request.data['category']

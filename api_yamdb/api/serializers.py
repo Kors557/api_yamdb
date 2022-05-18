@@ -100,6 +100,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('__all__')
 
+
 class CommentSerializer(serializers.ModelSerializer):
     """Сериализатор для комментариев."""
 

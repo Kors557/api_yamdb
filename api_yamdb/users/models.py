@@ -28,23 +28,23 @@ class User(AbstractUser):
     bio = models.TextField(
         "Биография",
         blank=True,
-        )
+    )
     email = models.EmailField(
         "email",
         unique=True,
         null=False,
         max_length=254
-        )
+    )
     first_name = models.CharField(
         "Имя",
         max_length=150,
         blank=True
-        )
+    )
     last_name = models.CharField(
         "Фамилия",
         max_length=150,
         blank=True
-        )
+    )
     confirmation_code = models.UUIDField(default=uuid.uuid4, editable=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
