@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import UniqueConstraint
 
 
 class Category(models.Model):
@@ -32,7 +33,8 @@ class Title(models.Model):
     )
     name = models.CharField(max_length=256)
     year = models.PositiveIntegerField()
-    description = models.CharField(max_length=256)
+    rating = models.PositiveSmallIntegerField(default=None, null=True)
+    description = models.CharField(max_length=256, null=True)
 
     def __str__(self):
         return self.name
@@ -74,6 +76,9 @@ class Review(models.Model):
                 name='unique_review'
             )
         ]
+
+    def __str__(self):
+        return self.text
 
 
 class Comment(models.Model):
